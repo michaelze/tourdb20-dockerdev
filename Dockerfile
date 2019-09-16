@@ -1,15 +1,19 @@
 FROM michaelze/tourdb20-dockerbase:latest
 
-RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
-    php -r "if (hash_file('sha384', 'composer-setup.php') === '48e3236262b34d30969dca3c37281b3b4bbe3221bda826ac6a9a62d6444cdb0dcd0615698a5cbe587c3f0fe57a54d8f5') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" && \
-    php composer-setup.php --install-dir=/bin --filename=composer && \
-    php -r "unlink('composer-setup.php');"
-
 RUN apt-get update && \
     apt-get install -y \
         gnupg \
         git \
         zip \
-        unzip && \
+        unzip \
+        wget && \
     curl -sL https://deb.nodesource.com/setup_10.x | bash - && \
     apt-get install -y nodejs
+
+COPY composer-installer.sh /tmp/
+
+# sleep 1 to get rid of "text file busy" error messages
+RUN chmod +x /tmp/composer-installer.sh && \
+    sleep 1 && \
+    /tmp/composer-installer.sh && \
+    rm /tmp/composer-installer.sh
