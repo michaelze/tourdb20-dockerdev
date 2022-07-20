@@ -1,4 +1,4 @@
-FROM michaelze/tourdb20-dockerbase:latest
+FROM michaelze/tourdb20-dockerbase:1.2
 
 RUN apt-get update && \
     apt-get install -y \
